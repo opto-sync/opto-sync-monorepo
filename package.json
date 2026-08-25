@@ -1,0 +1,14 @@
+{
+  "name": "@opto-sync/monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Immutable Opto Sync component composition and provenance verifier",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "verify": "node scripts/verify-composition.mjs",
+    "test": "node --test tests/*.test.mjs"
+  }
+}

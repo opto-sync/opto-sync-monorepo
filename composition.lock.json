@@ -1,0 +1,69 @@
+{
+  "schema": "opto-sync.composition-lock.v1",
+  "resolver": "git-tree-and-deterministic-tar-v1",
+  "components": [
+    {
+      "name": "opto-sync-interfaces",
+      "path": "apps/opto-sync-interfaces",
+      "repository": "https://github.com/opto-sync/opto-sync-interfaces.git",
+      "revision": "b92b3a2eb43eeb183144521a188ae465a013951e",
+      "tree": "4d335954931de56789e6615e46db6ae6535e7f56",
+      "archiveSha256": "bbaae8b214abade629d9bc7e5d9eacdf824d53aa08a14744288972d21e5498c5",
+      "packageIdentity": "opto-sync-interfaces"
+    },
+    {
+      "name": "opto-sync-lib",
+      "path": "apps/opto-sync-lib",
+      "repository": "https://github.com/opto-sync/opto-sync-lib.git",
+      "revision": "f2ea017328aff58401d38a6d36480c45b39d3c15",
+      "tree": "b7df1c1764e137019a301d15b6e0486e33b8dcc3",
+      "archiveSha256": "0a86f8dc08818e607ab90d7071c9c718c3b859b860576a9251fe115eaa8c4670",
+      "packageIdentity": "opto-sync-lib"
+    },
+    {
+      "name": "opto-sync-clients",
+      "path": "apps/opto-sync-clients",
+      "repository": "https://github.com/opto-sync/opto-sync-clients.git",
+      "revision": "1d22a98fbef4888e36ca1f78b72d469f74f61721",
+      "tree": "9c61c311fb663da24af80d33b9f569d219ef9a8a",
+      "archiveSha256": "2d0e644509e5d4fc8aa90e6d56f3f4e03daff7175211d9f2a65f77e51ffce69f",
+      "packageIdentity": "opto-sync-client-matrix"
+    },
+    {
+      "name": "opto-sync-cli",
+      "path": "apps/opto-sync-cli",
+      "repository": "https://github.com/opto-sync/opto-sync-cli.git",
+      "revision": "7a07ed4de7bed1656f3dfa1cbe73a8c996a8eab3",
+      "tree": "1cf0d5cce68d9eb2df9d31182766f912058c0334",
+      "archiveSha256": "17cb579665949adb42d3e416b40995871513751b9d4242c13833fdaf8f1f1639",
+      "packageIdentity": "opto-sync-cli"
+    }
+  ],
+  "engine": {
+    "logicalName": "syncer.c",
+    "owner": "apps/opto-sync-clients",
+    "resolution": "nested-gitlink",
+    "repository": "https://github.com/opto-sync/syncer.c.git",
+    "revision": "daade9935ce59a2fe84ec8b407d75ad1200428ed",
+    "zedCoordinates": []
+  },
+  "cleanRoomTargets": [
+    "clients/typescript",
+    "clients/dart",
+    "clients/flutter",
+    "clients/rust",
+    "clients/wasm",
+    "clients/gleam",
+    "clients/flutter_background"
+  ],
+  "transportEvidence": [
+    "indexeddb",
+    "sqlite",
+    "postgresql",
+    "supabase",
+    "http",
+    "websocket",
+    "tcp"
+  ],
+  "publicationEnabled": false
+}

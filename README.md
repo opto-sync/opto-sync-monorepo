@@ -5,9 +5,33 @@ duplicate engine ownership.
 
 ## Status
 
-Bootstrap repository. It contains no vendored implementation and publishes no
-package. Composition will be enabled only after the independent package
-contracts and immutable locks exist.
+Implemented composition superproject; publication remains disabled. The
+`apps/` directory contains exact Git submodules for interfaces, policy library,
+the 27-target client matrix, and the read-only CLI. `composition.lock.json`
+records every commit, Git tree, package identity, and SHA-256 digest of a
+deterministic `git archive`.
+
+```sh
+git clone --recurse-submodules https://github.com/opto-sync/opto-sync-monorepo.git
+npm ci --ignore-scripts
+npm test
+npm run verify
+```
+
+## Immutable component set
+
+| Component | Reviewed revision | Role |
+| --- | --- | --- |
+| `apps/opto-sync-interfaces` | `b92b3a2eb43eeb183144521a188ae465a013951e` | Transport-neutral contracts and generated declarations. |
+| `apps/opto-sync-lib` | `f2ea017328aff58401d38a6d36480c45b39d3c15` | Deterministic lifecycle, retry, checkpoint, and replay policy. |
+| `apps/opto-sync-clients` | `1d22a98fbef4888e36ca1f78b72d469f74f61721` | 27 client targets plus the sole nested `syncer.c` engine. |
+| `apps/opto-sync-cli` | `7a07ed4de7bed1656f3dfa1cbe73a8c996a8eab3` | Bounded validation, trace replay, and redacted diagnostics. |
+
+The verifier checks the committed gitlinks, repository URLs, commit ancestry,
+tree IDs, package names, deterministic archive digests, required clean-room
+target directories, and evidence for IndexedDB, SQLite, PostgreSQL, Supabase,
+HTTP, WebSocket, and TCP. It rejects a second engine or a mixed Git/Zed engine
+resolution before any component build is started.
 
 ## Composition contract
 
@@ -39,15 +63,15 @@ by `opto-sync-clients` must not be accompanied by a second Zed-resolved engine.
 - Destructive and cross-runtime tests run in `opto-sync-test` or another
   isolated environment, not against production systems.
 
-## First implementation gates
+## Implemented composition gates
 
-- Add immutable component coordinates and a resolver-generated lock; do not
-  fabricate lock state.
-- Verify repository identity, commit ancestry, package identity, and engine
-  uniqueness before build or test execution.
-- Run clean-room TypeScript, Dart/Flutter, Rust/WebAssembly, Gleam/BEAM, and
-  mobile background-lifecycle consumers.
-- Exercise IndexedDB, SQLite, PostgreSQL, Supabase, HTTP, WebSocket, and TCP
-  convergence with deterministic fault injection and bounded evidence.
-- Record release-set provenance and deterministic archive digests while keeping
-  publication disabled until every declared target is independently certified.
+- `.gitmodules` and the Git index pin all four components under `apps/`.
+- `composition.lock.json` is the reviewed resolver output and release-set
+  provenance record; `scripts/verify-composition.mjs` recomputes its evidence.
+- The clients pin supplies TypeScript, Dart/Flutter, Rust/WebAssembly,
+  Gleam/BEAM, and mobile-background targets and owns the only engine gitlink.
+- Component-specific clean-room and fault-injection suites stay in their owning
+  client/E2E repositories; this repository verifies their immutable source set
+  instead of recursively rediscovering and running unbuilt component tests.
+- CI initializes submodules recursively, verifies the lock and safety policy,
+  runs composition tests, and proves `.zpkg.toml` publication is disabled.
