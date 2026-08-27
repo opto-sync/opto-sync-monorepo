@@ -2,3 +2,15 @@
 	path = apps/opto-sync-sidecar.rs
 	url = https://github.com/opto-sync/opto-sync-sidecar.rs.git
 	branch = main
+[submodule "apps/opto-sync-interfaces"]
+	path = apps/opto-sync-interfaces
+	url = https://github.com/opto-sync/opto-sync-interfaces.git
+[submodule "apps/opto-sync-lib"]
+	path = apps/opto-sync-lib
+	url = https://github.com/opto-sync/opto-sync-lib.git
+[submodule "apps/opto-sync-clients"]
+	path = apps/opto-sync-clients
+	url = https://github.com/opto-sync/opto-sync-clients.git
+[submodule "apps/opto-sync-cli"]
+	path = apps/opto-sync-cli
+	url = https://github.com/opto-sync/opto-sync-cli.git
