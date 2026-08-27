@@ -1,0 +1,4 @@
+[submodule "apps/opto-sync-sidecar.rs"]
+	path = apps/opto-sync-sidecar.rs
+	url = https://github.com/opto-sync/opto-sync-sidecar.rs.git
+	branch = main
