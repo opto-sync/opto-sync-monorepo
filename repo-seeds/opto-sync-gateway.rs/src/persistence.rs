@@ -6,8 +6,7 @@ use thiserror::Error;
 
 use crate::{checkpoint::CheckpointKey, Cursor};
 
-pub type StoreFuture<'a, T> =
-    Pin<Box<dyn Future<Output = Result<T, StoreError>> + Send + 'a>>;
+pub type StoreFuture<'a, T> = Pin<Box<dyn Future<Output = Result<T, StoreError>> + Send + 'a>>;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -42,10 +41,7 @@ pub enum StoreError {
 }
 
 pub trait DurableStore: Send + Sync {
-    fn load_checkpoint<'a>(
-        &'a self,
-        key: &'a CheckpointKey,
-    ) -> StoreFuture<'a, Option<Cursor>>;
+    fn load_checkpoint<'a>(&'a self, key: &'a CheckpointKey) -> StoreFuture<'a, Option<Cursor>>;
 
     fn compare_and_set_checkpoint<'a>(
         &'a self,
@@ -64,10 +60,7 @@ pub trait DurableStore: Send + Sync {
 pub struct UnavailableDurableStore;
 
 impl DurableStore for UnavailableDurableStore {
-    fn load_checkpoint<'a>(
-        &'a self,
-        _key: &'a CheckpointKey,
-    ) -> StoreFuture<'a, Option<Cursor>> {
+    fn load_checkpoint<'a>(&'a self, _key: &'a CheckpointKey) -> StoreFuture<'a, Option<Cursor>> {
         Box::pin(async { Err(StoreError::Unavailable) })
     }
 
