@@ -17,6 +17,8 @@ use subtle::ConstantTimeEq;
 use thiserror::Error;
 use tokio::sync::{OwnedSemaphorePermit, Semaphore};
 
+pub mod checkpoint;
+
 pub const PROTOCOL_VERSION: u16 = 1;
 pub const DEFAULT_MAX_MESSAGE_BYTES: usize = 1024 * 1024;
 pub const HARD_MAX_MESSAGE_BYTES: usize = 4 * 1024 * 1024;
