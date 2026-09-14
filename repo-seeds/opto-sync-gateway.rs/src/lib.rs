@@ -10,7 +10,7 @@ use axum::{
     routing::get,
     Json, Router,
 };
-use futures_util::{SinkExt, StreamExt};
+use futures_util::StreamExt;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use subtle::ConstantTimeEq;
@@ -145,6 +145,22 @@ enum ServerFrame {
     },
 }
 
+#[derive(Debug, Clone, Copy)]
+struct RequestError {
+    status: StatusCode,
+    code: &'static str,
+}
+
+impl RequestError {
+    const fn new(status: StatusCode, code: &'static str) -> Self {
+        Self { status, code }
+    }
+
+    fn into_response(self) -> Response {
+        error(self.status, self.code)
+    }
+}
+
 #[derive(Clone)]
 struct GatewayState {
     config: Config,
@@ -175,7 +191,7 @@ async fn websocket(
 ) -> Response {
     let auth = match authorize(&state.config, &headers) {
         Ok(auth) => auth,
-        Err(response) => return response,
+        Err(request_error) => return request_error.into_response(),
     };
     let permit = match state.sessions.clone().try_acquire_owned() {
         Ok(permit) => permit,
@@ -403,16 +419,22 @@ async fn send(socket: &mut WebSocket, frame: ServerFrame) -> Result<(), axum::Er
     socket.send(Message::Text(json.into())).await
 }
 
-fn authorize(config: &Config, headers: &HeaderMap) -> Result<AuthContext, Response> {
+fn authorize(config: &Config, headers: &HeaderMap) -> Result<AuthContext, RequestError> {
     if let Some(expected) = config.internal_auth.as_deref() {
         let Some(actual) = headers
             .get("x-ores-internal-auth")
             .and_then(|v| v.to_str().ok())
         else {
-            return Err(error(StatusCode::UNAUTHORIZED, "missing_internal_auth"));
+            return Err(RequestError::new(
+                StatusCode::UNAUTHORIZED,
+                "missing_internal_auth",
+            ));
         };
         if expected.as_bytes().ct_eq(actual.as_bytes()).unwrap_u8() != 1 {
-            return Err(error(StatusCode::UNAUTHORIZED, "invalid_internal_auth"));
+            return Err(RequestError::new(
+                StatusCode::UNAUTHORIZED,
+                "invalid_internal_auth",
+            ));
         }
     }
     Ok(AuthContext {
@@ -422,13 +444,16 @@ fn authorize(config: &Config, headers: &HeaderMap) -> Result<AuthContext, Respon
     })
 }
 
-fn required_identity(headers: &HeaderMap, name: &'static str) -> Result<String, Response> {
+fn required_identity(headers: &HeaderMap, name: &'static str) -> Result<String, RequestError> {
     let value = headers
         .get(name)
         .and_then(|v| v.to_str().ok())
-        .ok_or_else(|| error(StatusCode::BAD_REQUEST, "missing_scope_header"))?;
+        .ok_or_else(|| RequestError::new(StatusCode::BAD_REQUEST, "missing_scope_header"))?;
     if !valid_id(value) {
-        return Err(error(StatusCode::BAD_REQUEST, "invalid_scope_header"));
+        return Err(RequestError::new(
+            StatusCode::BAD_REQUEST,
+            "invalid_scope_header",
+        ));
     }
     Ok(value.to_owned())
 }
