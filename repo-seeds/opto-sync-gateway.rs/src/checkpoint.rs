@@ -27,10 +27,7 @@ pub enum CheckpointDecision {
     RejectTokenConflict,
 }
 
-pub fn decide_checkpoint(
-    current: Option<&Cursor>,
-    proposed: &Cursor,
-) -> CheckpointDecision {
+pub fn decide_checkpoint(current: Option<&Cursor>, proposed: &Cursor) -> CheckpointDecision {
     let Some(current) = current else {
         return CheckpointDecision::FirstCommit;
     };
@@ -138,7 +135,10 @@ mod tests {
     #[test]
     fn resume_allows_fresh_and_known_durable_history() {
         let durable = cursor(10, "cursor_10");
-        assert_eq!(decide_resume(None, Some(&durable), 5), ResumeDecision::Fresh);
+        assert_eq!(
+            decide_resume(None, Some(&durable), 5),
+            ResumeDecision::Fresh
+        );
         assert_eq!(
             decide_resume(Some(&cursor(8, "cursor_8")), Some(&durable), 5),
             ResumeDecision::Resume
