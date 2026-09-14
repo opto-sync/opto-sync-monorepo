@@ -18,6 +18,7 @@ use thiserror::Error;
 use tokio::sync::{OwnedSemaphorePermit, Semaphore};
 
 pub mod checkpoint;
+pub mod persistence;
 
 pub const PROTOCOL_VERSION: u16 = 1;
 pub const DEFAULT_MAX_MESSAGE_BYTES: usize = 1024 * 1024;
